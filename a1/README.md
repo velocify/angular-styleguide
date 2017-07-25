@@ -1,30 +1,4 @@
-# Angular 1 Style Guide
-
-## Angular Team Endorsed
-Special thanks to Igor Minar, lead on the Angular team, for reviewing, contributing feedback, and entrusting me to shepherd this guide.
-
-## Purpose
-*Opinionated Angular style guide for teams by [@john_papa](//twitter.com/john_papa)*
-
-If you are looking for an opinionated style guide for syntax, conventions, and structuring Angular applications, then step right in. These styles are based on my development experience with [Angular](//angularjs.org), presentations, [Pluralsight training courses](http://app.pluralsight.com/author/john-papa) and working in teams.
-
-The purpose of this style guide is to provide guidance on building Angular applications by showing the conventions I use and, more importantly, why I choose them.
-
->If you like this guide, check out my [Angular Patterns: Clean Code](http://jpapa.me/ngclean) course at Pluralsight which is a companion to this guide.
-
-  [![Angular Patterns: Clean Code](https://raw.githubusercontent.com/johnpapa/angular-styleguide/master/a1/assets/ng-clean-code-banner.png)](http://jpapa.me/ngclean)
-
-## Community Awesomeness and Credit
-Never work in a vacuum. I find that the Angular community is an incredible group who are passionate about sharing experiences. As such, Angular expert Todd Motto and I have collaborated on many styles and conventions. We agree on most, and some we diverge. I encourage you to check out [Todd's guidelines](https://github.com/toddmotto/angular-styleguide) to get a sense for his approach and how it compares.
-
-Many of my styles have been from the many pair programming sessions [Ward Bell](https://twitter.com/wardbell) and I have had. My friend Ward has certainly helped influence the ultimate evolution of this guide.
-
-## See the Styles in a Sample App
-While this guide explains the *what*, *why* and *how*, I find it helpful to see them in practice. This guide is accompanied by a sample application that follows these styles and patterns. You can find the [sample application (named modular) here](https://github.com/johnpapa/ng-demos) in the `modular` folder. Feel free to grab it, clone it, or fork it. [Instructions on running it are in its readme](https://github.com/johnpapa/ng-demos/tree/master/modular).
-
-## Translations
-
-[Translations of this Angular style guide](https://github.com/johnpapa/angular-styleguide/tree/master/a1/i18n) are maintained by the community and can be found here.
+# Velocify Angular 1 Style Guide
 
 ## Table of Contents
 
@@ -62,7 +36,7 @@ While this guide explains the *what*, *why* and *how*, I find it helpful to see 
 ## Single Responsibility
 
 ### Rule of 1
-###### [Style [Y001](#style-y001)]
+###### [Style [Y001](#style-y001)] [ESLint [component-limit](https://github.com/Gillespie59/eslint-plugin-angularjs/blob/HEAD/docs/component-limit.md)]
 
   - Define 1 component per file, recommended to be less than 400 lines of code.
 
@@ -283,7 +257,7 @@ While this guide explains the *what*, *why* and *how*, I find it helpful to see 
   ```
 
 ### Named vs Anonymous Functions
-###### [Style [Y024](#style-y024)]
+###### [Style [Y024](#style-y024)] [ESLint [function-type](https://github.com/Gillespie59/eslint-plugin-angularjs/blob/HEAD/docs/function-type.md)]
 
   - Use named functions instead of passing an anonymous function in as a callback.
 
@@ -347,7 +321,7 @@ While this guide explains the *what*, *why* and *how*, I find it helpful to see 
   ```
 
 ### controllerAs Controller Syntax
-###### [Style [Y031](#style-y031)]
+###### [Style [Y031](#style-y031)] [ESLint [controller-as-route](https://github.com/Gillespie59/eslint-plugin-angularjs/blob/HEAD/docs/controller-as-route.md)] [ESLint [controller-as](https://github.com/Gillespie59/eslint-plugin-angularjs/blob/HEAD/docs/controller-as.md)] 
 
   - Use the `controllerAs` syntax over the `classic controller with $scope` syntax.
 
@@ -374,7 +348,7 @@ While this guide explains the *what*, *why* and *how*, I find it helpful to see 
   ```
 
 ### controllerAs with vm
-###### [Style [Y032](#style-y032)]
+###### [Style [Y032](#style-y032)] [ESLint [controller-as-vm](https://github.com/Gillespie59/eslint-plugin-angularjs/blob/HEAD/docs/controller-as-vm.md)]
 
   - Use a capture variable for `this` when using the `controllerAs` syntax. Choose a consistent variable name such as `vm`, which stands for ViewModel.
 
@@ -729,7 +703,7 @@ While this guide explains the *what*, *why* and *how*, I find it helpful to see 
 ## Services
 
 ### Singletons
-###### [Style [Y040](#style-y040)]
+###### [Style [Y040](#style-y040)] [ESLint [no-service-method](https://github.com/Gillespie59/eslint-plugin-angularjs/blob/HEAD/docs/no-service-method.md)]
 
   - Services are instantiated with the `new` keyword, use `this` for public methods and variables. Since these are so similar to factories, use a factory instead for consistency.
 
@@ -1163,7 +1137,7 @@ While this guide explains the *what*, *why* and *how*, I find it helpful to see 
     *Why?*: DOM manipulation can be difficult to test, debug, and there are often better ways (e.g. CSS, animations, templates)
 
 ### Provide a Unique Directive Prefix
-###### [Style [Y073](#style-y073)]
+###### [Style [Y073](#style-y073)] [ESLint [directive-name](https://github.com/Gillespie59/eslint-plugin-angularjs/blob/HEAD/docs/directive-name.md)]
 
   - Provide a short, unique and descriptive directive prefix such as `acmeSalesCustomerInfo` which would be declared in HTML as `acme-sales-customer-info`.
 
@@ -1172,7 +1146,7 @@ While this guide explains the *what*, *why* and *how*, I find it helpful to see 
     Note: Avoid `ng-` as these are reserved for Angular directives. Research widely used directives to avoid naming conflicts, such as `ion-` for the [Ionic Framework](http://ionicframework.com/).
 
 ### Restrict to Elements and Attributes
-###### [Style [Y074](#style-y074)]
+###### [Style [Y074](#style-y074)] [ESLint [directive-restrict](https://github.com/Gillespie59/eslint-plugin-angularjs/blob/HEAD/docs/directive-restrict.md)]
 
   - When creating a directive that makes sense as a stand-alone element, allow restrict `E` (custom element) and optionally restrict `A` (custom attribute). Generally, if it could be its own control, `E` is appropriate. General guideline is allow `EA` but lean towards implementing as an element when it's stand-alone and as an attribute when it enhances its existing DOM element.
 
@@ -1965,7 +1939,7 @@ While this guide explains the *what*, *why* and *how*, I find it helpful to see 
 ## Naming
 
 ### Naming Guidelines
-###### [Style [Y120](#style-y120)]
+###### [Style [Y120](#style-y120)] [ESLint [file-name](https://github.com/Gillespie59/eslint-plugin-angularjs/blob/HEAD/docs/file-name.md)]
 
   - Use consistent names for all components following a pattern that describes the component's feature then (optionally) its type. My recommended pattern is `feature.type.js`. There are 2 names for most assets:
     * the file name (`avengers.controller.js`)
@@ -1976,7 +1950,7 @@ While this guide explains the *what*, *why* and *how*, I find it helpful to see 
     *Why?*: The naming conventions should simply help you find your code faster and make it easier to understand.
 
 ### Feature File Names
-###### [Style [Y121](#style-y121)]
+###### [Style [Y121](#style-y121)] [ESLint [file-name](https://github.com/Gillespie59/eslint-plugin-angularjs/blob/HEAD/docs/file-name.md)]
 
   - Use consistent names for all components following a pattern that describes the component's feature then (optionally) its type. My recommended pattern is `feature.type.js`.
 
@@ -2062,7 +2036,7 @@ While this guide explains the *what*, *why* and *how*, I find it helpful to see 
     ```
 
 ### Controller Names
-###### [Style [Y123](#style-y123)]
+###### [Style [Y123](#style-y123)] [ESLint [controller-name](https://github.com/Gillespie59/eslint-plugin-angularjs/blob/HEAD/docs/controller-name.md)]
 
   - Use consistent names for all controllers named after their feature. Use UpperCamelCase for controllers, as they are constructors.
 
@@ -2084,7 +2058,7 @@ While this guide explains the *what*, *why* and *how*, I find it helpful to see 
     ```
 
 ### Controller Name Suffix
-###### [Style [Y124](#style-y124)]
+###### [Style [Y124](#style-y124)] [ESLint [controller-name](https://github.com/Gillespie59/eslint-plugin-angularjs/blob/HEAD/docs/controller-name.md)]
 
   - Append the controller name with the suffix `Controller`.
 
@@ -2104,7 +2078,7 @@ While this guide explains the *what*, *why* and *how*, I find it helpful to see 
     ```
 
 ### Factory and Service Names
-###### [Style [Y125](#style-y125)]
+###### [Style [Y125](#style-y125)] [ESLint [constant-name](https://github.com/Gillespie59/eslint-plugin-angularjs/blob/HEAD/docs/constant-name.md)] [ESLint [factory-name](https://github.com/Gillespie59/eslint-plugin-angularjs/blob/HEAD/docs/factory-name.md)] [ESLint [provider-name](https://github.com/Gillespie59/eslint-plugin-angularjs/blob/HEAD/docs/provider-name.md)] [ESLint [service-name](https://github.com/Gillespie59/eslint-plugin-angularjs/blob/HEAD/docs/service-name.md)] [ESLint [value-name](https://github.com/Gillespie59/eslint-plugin-angularjs/blob/HEAD/docs/value-name.md)]
 
   - Use consistent names for all factories and services named after their feature. Use camel-casing for services and factories. Avoid prefixing factories and services with `$`. Only suffix service and factories with `Service` when it is not clear what they are (i.e. when they are nouns).
 
@@ -2150,7 +2124,7 @@ While this guide explains the *what*, *why* and *how*, I find it helpful to see 
     ```
 
 ### Directive Component Names
-###### [Style [Y126](#style-y126)]
+###### [Style [Y126](#style-y126)] [ESLint [directive-name](https://github.com/Gillespie59/eslint-plugin-angularjs/blob/HEAD/docs/directive-name.md)]
 
   - Use consistent names for all directives using camelCase. Use a short prefix to describe the area that the directives belong (some example are company prefix or project prefix).
 
@@ -2172,7 +2146,7 @@ While this guide explains the *what*, *why* and *how*, I find it helpful to see 
     ```
 
 ### Modules
-###### [Style [Y127](#style-y127)]
+###### [Style [Y127](#style-y127)] [ESLint [module-name](https://github.com/Gillespie59/eslint-plugin-angularjs/blob/HEAD/docs/module-name.md)]
 
   - When there are multiple modules, the main module file is named `app.module.js` while other dependent modules are named after what they represent. For example, an admin module is named `admin.module.js`. The respective registered module names would be `app` and `admin`.
 
@@ -2472,7 +2446,7 @@ While this guide explains the *what*, *why* and *how*, I find it helpful to see 
   ```
 
 ### Run Blocks
-###### [Style [Y171](#style-y171)]
+###### [Style [Y171](#style-y171)] [ESLint [no-run-logic](https://github.com/Gillespie59/eslint-plugin-angularjs/blob/HEAD/docs/no-run-logic.md)]
 
   - Any code that needs to run when an application starts should be declared in a factory, exposed via a function, and injected into the [run block](https://docs.angularjs.org/guide/module#module-loading-dependencies). 
   
@@ -2500,14 +2474,14 @@ While this guide explains the *what*, *why* and *how*, I find it helpful to see 
 ## Angular $ Wrapper Services
 
 ### $document and $window
-###### [Style [Y180](#style-y180)]
+###### [Style [Y180](#style-y180)] [ESLint [document-service](https://github.com/Gillespie59/eslint-plugin-angularjs/blob/HEAD/docs/document-service.md)] [ESLint [window-service](https://github.com/Gillespie59/eslint-plugin-angularjs/blob/HEAD/docs/window-service.md)]
 
   - Use [`$document`](https://docs.angularjs.org/api/ng/service/$document) and [`$window`](https://docs.angularjs.org/api/ng/service/$window) instead of `document` and `window`.
 
     *Why?*: These services are wrapped by Angular and more easily testable than using document and window in tests. This helps you avoid having to mock document and window yourself.
 
 ### $timeout and $interval
-###### [Style [Y181](#style-y181)]
+###### [Style [Y181](#style-y181)] [ESLint [document-service](https://github.com/Gillespie59/eslint-plugin-angularjs/blob/HEAD/docs/document-service.md)] [ESLint [timeout-service](https://github.com/Gillespie59/eslint-plugin-angularjs/blob/HEAD/docs/timeout-service.md)]
 
   - Use [`$timeout`](https://docs.angularjs.org/api/ng/service/$timeout) and [`$interval`](https://docs.angularjs.org/api/ng/service/$interval) instead of `setTimeout` and `setInterval` .
 
