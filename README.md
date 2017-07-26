@@ -1,5 +1,8 @@
 # Velocify Angular Style Guides
+## Other Style Guides
 
+  - [Javascript](https://github.com/velocify/javascript)
+  
 ## Versions
 There are multiple versions of Angular, and thus there are multiple versions of the guide. Choose your guide appropriately.
 
