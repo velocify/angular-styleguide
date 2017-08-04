@@ -6,8 +6,7 @@
   1. [IIFE](#iife)
   1. [Modules](#modules)
   1. [Controllers](#controllers)
-  1. [Services](#services)
-  1. [Factories](#factories)
+  1. [Services and Factories](#services-and-factories)
   1. [Data Services](#data-services)
   1. [Directives](#directives)
   1. [Resolving Promises](#resolving-promises)
@@ -37,8 +36,9 @@
 
 ### Rule of 1
 ###### [Style [Y001](#style-y001)] [ESLint [component-limit](https://github.com/Gillespie59/eslint-plugin-angularjs/blob/HEAD/docs/component-limit.md)]
-
   - Define 1 component per file, recommended to be less than 400 lines of code.
+
+  Exception: constants. You may declare as many constants as you like in a single file, as long as that file is dedicated to constants.
 
   *Why?*: One component per file promotes easier unit testing and mocking.
 
@@ -114,7 +114,8 @@
 ## IIFE
 ### JavaScript Scopes
 ###### [Style [Y010](#style-y010)]
-
+  *Explicit IIFE is no longer necessary because we use a GULP task to automatically add it.*
+  
   - Wrap Angular components in an Immediately Invoked Function Expression (IIFE).
 
   *Why?*: An IIFE removes variables from the global scope. This helps prevent variables and function declarations from living longer than expected in the global scope, which also helps avoid variable collisions.
@@ -182,6 +183,9 @@
 ###### [Style [Y020](#style-y020)]
 
   - Use unique naming conventions with separators for sub-modules.
+  - All modules should be prefixed with "vlfy."
+  - The root module of each application should be named "vlfy.AppName" where AppName is the name of the application.
+  - Application-specific modules should be prefixed with "vlfy.AppName." where AppName is the name of the application.
 
   *Why?*: Unique names help avoid module name collisions. Separators help define modules and their submodule hierarchy. For example `app` may be your root module while `app.dashboard` and `app.users` may be modules that are used as dependencies of `app`.
 
@@ -411,7 +415,7 @@
 ### Bindable Members Up Top
 ###### [Style [Y033](#style-y033)]
 
-  - Place bindable members at the top of the controller, alphabetized, and not spread through the controller code.
+  - Place bindable members at the top of the controller, and not spread through the controller code.
 
     *Why?*: Placing bindable members at the top makes it easy to read and helps you instantly identify which members of the controller can be bound and used in the View.
 
@@ -521,7 +525,7 @@
    * avoid
    * Using function expressions.
    */
-  function AvengersController(avengersService, logger) {
+  function avengersCtrl(avengersService, logger) {
       var vm = this;
       vm.avengers = [];
       vm.title = 'Avengers';
@@ -553,7 +557,7 @@
    * Using function declarations
    * and bindable members up top.
    */
-  function AvengersController(avengersService, logger) {
+  function avengersCtrl(avengersSvc, logger) {
       var vm = this;
       vm.avengers = [];
       vm.getAvengers = getAvengers;
@@ -568,7 +572,7 @@
       }
 
       function getAvengers() {
-          return avengersService.getAvengers().then(function(data) {
+          return avengersSvc.getAvengers().then(function(data) {
               vm.avengers = data;
               return vm.avengers;
           });
@@ -670,7 +674,7 @@
 
   ```html
   <!-- avengers.html -->
-  <div ng-controller="AvengersController as vm">
+  <div ng-controller="avengersCtrl as vm">
   </div>
   ```
 
@@ -700,56 +704,18 @@
 
 **[Back to top](#table-of-contents)**
 
-## Services
-
-### Singletons
-###### [Style [Y040](#style-y040)] [ESLint [no-service-method](https://github.com/Gillespie59/eslint-plugin-angularjs/blob/HEAD/docs/no-service-method.md)]
-
-  - Services are instantiated with the `new` keyword, use `this` for public methods and variables. Since these are so similar to factories, use a factory instead for consistency.
-
-    Note: [All Angular services are singletons](https://docs.angularjs.org/guide/services). This means that there is only one instance of a given service per injector.
-
-  ```javascript
-  // service
-  angular
-      .module('app')
-      .service('logger', logger);
-
-  function logger() {
-    this.logError = function(msg) {
-      /* */
-    };
-  }
-  ```
-
-  ```javascript
-  // factory
-  angular
-      .module('app')
-      .factory('logger', logger);
-
-  function logger() {
-      return {
-          logError: function(msg) {
-            /* */
-          }
-     };
-  }
-  ```
-
-**[Back to top](#table-of-contents)**
-
-## Factories
+## Services and Factories
 
 ### Single Responsibility
 ###### [Style [Y050](#style-y050)]
 
-  - Factories should have a [single responsibility](https://en.wikipedia.org/wiki/Single_responsibility_principle), that is encapsulated by its context. Once a factory begins to exceed that singular purpose, a new factory should be created.
+  - Services and factories should have a [single responsibility](https://en.wikipedia.org/wiki/Single_responsibility_principle), that is encapsulated by its context. Once a service or factory begins to exceed that singular purpose, a new service/factory should be created.
 
 ### Singletons
 ###### [Style [Y051](#style-y051)]
 
-  - Factories are singletons and return an object that contains the members of the service.
+  - Services return a singleton instance of the service itself.
+  - Factories are singletons that return a new object.
 
     Note: [All Angular services are singletons](https://docs.angularjs.org/guide/services).
 
@@ -813,9 +779,9 @@
 ### Function Declarations to Hide Implementation Details
 ###### [Style [Y053](#style-y053)]
 
-  - Use function declarations to hide implementation details. Keep your accessible members of the factory up top. Point those to function declarations that appears later in the file. For more details see [this post](http://www.johnpapa.net/angular-function-declarations-function-expressions-and-readable-code).
+  - Use function declarations to hide implementation details. Keep your accessible members of the service/factory up top. Point those to function declarations that appears later in the file. For more details see [this post](http://www.johnpapa.net/angular-function-declarations-function-expressions-and-readable-code).
 
-    *Why?*: Placing accessible members at the top makes it easy to read and helps you instantly identify which functions of the factory you can access externally.
+    *Why?*: Placing accessible members at the top makes it easy to read and helps you instantly identify which functions of the service/factory you can access externally.
 
     *Why?*: Placing the implementation details of a function later in the file moves that complexity out of view so you can see the important stuff up top.
 
@@ -915,7 +881,7 @@
 ### Separate Data Calls
 ###### [Style [Y060](#style-y060)]
 
-  - Refactor logic for making data operations and interacting with data to a factory. Make data services responsible for XHR calls, local storage, stashing in memory, or any other data operations.
+  - Refactor logic for making data operations and interacting with data to a service/factory. Make data services responsible for XHR calls, local storage, stashing in memory, or any other data operations.
 
     *Why?*: The controller's responsibility is for the presentation and gathering of information for the view. It should not care how it gets the data, just that it knows who to ask for it. Separating the data services moves the logic on how to get it to the data service, and lets the controller be simpler and more focused on the view.
 
@@ -926,14 +892,13 @@
   ```javascript
   /* recommended */
 
-  // dataservice factory
   angular
       .module('app.core')
-      .factory('dataservice', dataservice);
+      .service('dataSvc', dataSvc);
 
   dataservice.$inject = ['$http', 'logger'];
 
-  function dataservice($http, logger) {
+  function dataSvc($http, logger) {
       return {
           getAvengers: getAvengers
       };
@@ -962,11 +927,11 @@
   // controller calling the dataservice factory
   angular
       .module('app.avengers')
-      .controller('AvengersController', AvengersController);
+      .controller('avengersCtrl', avengersCtrl);
 
-  AvengersController.$inject = ['dataservice', 'logger'];
+  avengersCtrl.$inject = ['dataSvc', 'logger'];
 
-  function AvengersController(dataservice, logger) {
+  function avengersCtrl(dataSvc, logger) {
       var vm = this;
       vm.avengers = [];
 
@@ -979,7 +944,7 @@
       }
 
       function getAvengers() {
-          return dataservice.getAvengers()
+          return dataSvc.getAvengers()
               .then(function(data) {
                   vm.avengers = data;
                   return vm.avengers;
@@ -1367,12 +1332,12 @@
 
   ```javascript
   /* avoid */
-  function AvengersController(dataservice) {
+  function avengersCtrl(dataSvc) {
       var vm = this;
       vm.avengers = [];
       vm.title = 'Avengers';
 
-      dataservice.getAvengers().then(function(data) {
+      dataSvc.getAvengers().then(function(data) {
           vm.avengers = data;
           return vm.avengers;
       });
@@ -1381,7 +1346,7 @@
 
   ```javascript
   /* recommended */
-  function AvengersController(dataservice) {
+  function avengersCtrl(dataSvc) {
       var vm = this;
       vm.avengers = [];
       vm.title = 'Avengers';
@@ -1391,7 +1356,7 @@
       ////////////
 
       function activate() {
-          return dataservice.getAvengers().then(function(data) {
+          return dataSvc.getAvengers().then(function(data) {
               vm.avengers = data;
               return vm.avengers;
           });
@@ -1402,6 +1367,8 @@
 ### Route Resolve Promises
 ###### [Style [Y081](#style-y081)]
 
+  - Only perform permission-related network calls in activation. Avoid any other type of network call in activation.
+  
   - When a controller depends on a promise to be resolved before the controller is activated, resolve those dependencies in the `$routeProvider` before the controller logic is executed. If you need to conditionally cancel a route before the controller is activated, use a route resolver.
 
   - Use a route resolve when you want to decide to cancel the route before ever transitioning to the View.
@@ -1416,14 +1383,14 @@
   /* avoid */
   angular
       .module('app')
-      .controller('AvengersController', AvengersController);
+      .controller('avengersCtrl', avengersCtrl);
 
-  function AvengersController(movieService) {
+  function avengersCtrl(movieSvc) {
       var vm = this;
       // unresolved
       vm.movies;
       // resolved asynchronously
-      movieService.getMovies().then(function(response) {
+      movieSvc.getMovies().then(function(response) {
           vm.movies = response.movies;
       });
   }
@@ -1441,11 +1408,11 @@
       $routeProvider
           .when('/avengers', {
               templateUrl: 'avengers.html',
-              controller: 'AvengersController',
+              controller: 'avengersCtrl',
               controllerAs: 'vm',
               resolve: {
-                  moviesPrepService: function(movieService) {
-                      return movieService.getMovies();
+                  moviesPrepSvc: function(movieSvc) {
+                      return movieSvc.getMovies();
                   }
               }
           });
@@ -1454,12 +1421,12 @@
   // avengers.js
   angular
       .module('app')
-      .controller('AvengersController', AvengersController);
+      .controller('avengersCtrl', avengersCtrl);
 
-  AvengersController.$inject = ['moviesPrepService'];
-  function AvengersController(moviesPrepService) {
+  avengersCtrl.$inject = ['moviesPrepSvc'];
+  function avengersCtrl(moviesPrepSvc) {
       var vm = this;
-      vm.movies = moviesPrepService.movies;
+      vm.movies = moviesPrepSvc.movies;
   }
   ```
 
@@ -1477,30 +1444,30 @@
       $routeProvider
           .when('/avengers', {
               templateUrl: 'avengers.html',
-              controller: 'AvengersController',
+              controller: 'avengersCtrl',
               controllerAs: 'vm',
               resolve: {
-                  moviesPrepService: moviesPrepService
+                moviesPrepSvc: moviesPrepSvc
               }
           });
   }
 
-  function moviesPrepService(movieService) {
-      return movieService.getMovies();
+  function moviesPrepSvc(movieSvc) {
+      return movieSvc.getMovies();
   }
 
   // avengers.js
   angular
       .module('app')
-      .controller('AvengersController', AvengersController);
+      .controller('avengersCtrl', avengersCtrl);
 
-  AvengersController.$inject = ['moviesPrepService'];
-  function AvengersController(moviesPrepService) {
+  avengersCtrl.$inject = ['moviesPrepSvc'];
+  function avengersCtrl(moviesPrepSvc) {
         var vm = this;
-        vm.movies = moviesPrepService.movies;
+        vm.movies = moviesPrepSvc.movies;
   }
   ```
-    Note: The code example's dependency on `movieService` is not minification safe on its own. For details on how to make this code minification safe, see the sections on [dependency injection](#manual-annotating-for-dependency-injection) and on [minification and annotation](#minification-and-annotation).
+    Note: The code example's dependency on `movieSvc` is not minification safe on its own. For details on how to make this code minification safe, see the sections on [dependency injection](#manual-annotating-for-dependency-injection) and on [minification and annotation](#minification-and-annotation).
 
 **[Back to top](#table-of-contents)**
 
@@ -1568,141 +1535,6 @@
 
 **[Back to top](#table-of-contents)**
 
-## Manual Annotating for Dependency Injection
-
-### UnSafe from Minification
-###### [Style [Y090](#style-y090)]
-
-  - Avoid using the shortcut syntax of declaring dependencies without using a minification-safe approach.
-
-    *Why?*: The parameters to the component (e.g. controller, factory, etc) will be converted to mangled variables. For example, `common` and `dataservice` may become `a` or `b` and not be found by Angular.
-
-    ```javascript
-    /* avoid - not minification-safe*/
-    angular
-        .module('app')
-        .controller('DashboardController', DashboardController);
-
-    function DashboardController(common, dataservice) {
-    }
-    ```
-
-    This code may produce mangled variables when minified and thus cause runtime errors.
-
-    ```javascript
-    /* avoid - not minification-safe*/
-    angular.module('app').controller('DashboardController', d);function d(a, b) { }
-    ```
-
-### Manually Identify Dependencies
-###### [Style [Y091](#style-y091)]
-
-  - Use `$inject` to manually identify your dependencies for Angular components.
-
-    *Why?*: This technique mirrors the technique used by [`ng-annotate`](https://github.com/olov/ng-annotate), which I recommend for automating the creation of minification safe dependencies. If `ng-annotate` detects injection has already been made, it will not duplicate it.
-
-    *Why?*: This safeguards your dependencies from being vulnerable to minification issues when parameters may be mangled. For example, `common` and `dataservice` may become `a` or `b` and not be found by Angular.
-
-    *Why?*: Avoid creating in-line dependencies as long lists can be difficult to read in the array. Also it can be confusing that the array is a series of strings while the last item is the component's function.
-
-    ```javascript
-    /* avoid */
-    angular
-        .module('app')
-        .controller('DashboardController',
-            ['$location', '$routeParams', 'common', 'dataservice',
-                function Dashboard($location, $routeParams, common, dataservice) {}
-            ]);
-    ```
-
-    ```javascript
-    /* avoid */
-    angular
-      .module('app')
-      .controller('DashboardController',
-          ['$location', '$routeParams', 'common', 'dataservice', Dashboard]);
-
-    function Dashboard($location, $routeParams, common, dataservice) {
-    }
-    ```
-
-    ```javascript
-    /* recommended */
-    angular
-        .module('app')
-        .controller('DashboardController', DashboardController);
-
-    DashboardController.$inject = ['$location', '$routeParams', 'common', 'dataservice'];
-
-    function DashboardController($location, $routeParams, common, dataservice) {
-    }
-    ```
-
-    Note: When your function is below a return statement the `$inject` may be unreachable (this may happen in a directive). You can solve this by moving the Controller outside of the directive.
-
-    ```javascript
-    /* avoid */
-    // inside a directive definition
-    function outer() {
-        var ddo = {
-            controller: DashboardPanelController,
-            controllerAs: 'vm'
-        };
-        return ddo;
-
-        DashboardPanelController.$inject = ['logger']; // Unreachable
-        function DashboardPanelController(logger) {
-        }
-    }
-    ```
-
-    ```javascript
-    /* recommended */
-    // outside a directive definition
-    function outer() {
-        var ddo = {
-            controller: DashboardPanelController,
-            controllerAs: 'vm'
-        };
-        return ddo;
-    }
-
-    DashboardPanelController.$inject = ['logger'];
-    function DashboardPanelController(logger) {
-    }
-    ```
-
-### Manually Identify Route Resolver Dependencies
-###### [Style [Y092](#style-y092)]
-
-  - Use `$inject` to manually identify your route resolver dependencies for Angular components.
-
-    *Why?*: This technique breaks out the anonymous function for the route resolver, making it easier to read.
-
-    *Why?*: An `$inject` statement can easily precede the resolver to handle making any dependencies minification safe.
-
-    ```javascript
-    /* recommended */
-    function config($routeProvider) {
-        $routeProvider
-            .when('/avengers', {
-                templateUrl: 'avengers.html',
-                controller: 'AvengersController',
-                controllerAs: 'vm',
-                resolve: {
-                    moviesPrepService: moviesPrepService
-                }
-            });
-    }
-
-    moviesPrepService.$inject = ['movieService'];
-    function moviesPrepService(movieService) {
-        return movieService.getMovies();
-    }
-    ```
-
-**[Back to top](#table-of-contents)**
-
 ## Minification and Annotation
 
 ### ng-annotate
@@ -1721,10 +1553,10 @@
     ```javascript
     angular
         .module('app')
-        .controller('AvengersController', AvengersController);
+        .controller('avengersCtrl', avengersCtrl);
 
     /* @ngInject */
-    function AvengersController(storage, avengerService) {
+    function avengersCtrl(storage, avengerService) {
         var vm = this;
         vm.heroSearch = '';
         vm.storeHero = storeHero;
@@ -1741,21 +1573,21 @@
     ```javascript
     angular
         .module('app')
-        .controller('AvengersController', AvengersController);
+        .controller('avengersCtrl', avengersCtrl);
 
     /* @ngInject */
-    function AvengersController(storage, avengerService) {
+    function avengersCtrl(storage, avengerSvc) {
         var vm = this;
         vm.heroSearch = '';
         vm.storeHero = storeHero;
 
         function storeHero() {
-            var hero = avengerService.find(vm.heroSearch);
+            var hero = avengerSvc.find(vm.heroSearch);
             storage.save(hero.name, hero);
         }
     }
 
-    AvengersController.$inject = ['storage', 'avengerService'];
+    avengersCtrl.$inject = ['storage', 'avengerSvc'];
     ```
 
     Note: If `ng-annotate` detects injection has already been made (e.g. `@ngInject` was detected), it will not duplicate the `$inject` code.
@@ -1768,11 +1600,11 @@
         $routeProvider
             .when('/avengers', {
                 templateUrl: 'avengers.html',
-                controller: 'AvengersController',
+                controller: 'avengersCtrl',
                 controllerAs: 'vm',
                 resolve: { /* @ngInject */
-                    moviesPrepService: function(movieService) {
-                        return movieService.getMovies();
+                    moviesPrepSvc: function(movieSvc) {
+                        return movieSvc.getMovies();
                     }
                 }
             });
@@ -1942,8 +1774,8 @@
 ###### [Style [Y120](#style-y120)] [ESLint [file-name](https://github.com/Gillespie59/eslint-plugin-angularjs/blob/HEAD/docs/file-name.md)]
 
   - Use consistent names for all components following a pattern that describes the component's feature then (optionally) its type. My recommended pattern is `feature.type.js`. There are 2 names for most assets:
-    * the file name (`avengers.controller.js`)
-    * the registered component name with Angular (`AvengersController`)
+    * the file name (`avengersCtrl.controller.js`)
+    * the registered component name with Angular (`avengersCtrl`)
 
     *Why?*: Naming conventions help provide a consistent way to find content at a glance. Consistency within the project is vital. Consistency with a team is important. Consistency across a company provides tremendous efficiency.
 
@@ -1952,7 +1784,9 @@
 ### Feature File Names
 ###### [Style [Y121](#style-y121)] [ESLint [file-name](https://github.com/Gillespie59/eslint-plugin-angularjs/blob/HEAD/docs/file-name.md)]
 
-  - Use consistent names for all components following a pattern that describes the component's feature then (optionally) its type. My recommended pattern is `feature.type.js`.
+  - Use this pattern for naming files: `feature.type.js`. 
+  - The "feature" portion should be camel-cased, except for directives.
+  - The "feature" portion of directive files should be kebab-cased.
 
     *Why?*: Provides a consistent way to quickly identify components.
 
@@ -1960,32 +1794,16 @@
 
     ```javascript
     /**
-     * common options
-     */
-
-    // Controllers
-    avengers.js
-    avengers.controller.js
-    avengersController.js
-
-    // Services/Factories
-    logger.js
-    logger.service.js
-    loggerService.js
-    ```
-
-    ```javascript
-    /**
      * recommended
      */
 
     // controllers
-    avengers.controller.js
-    avengers.controller.spec.js
+    avengersCtrl.controller.js
+    avengersCtrl.controller.spec.js
 
     // services/factories
-    logger.service.js
-    logger.service.spec.js
+    loggerCtrl.service.js
+    loggerCtrl.service.spec.js
 
     // constants
     constants.js
@@ -2004,18 +1822,7 @@
     avenger-profile.directive.js
     avenger-profile.directive.spec.js
     ```
-
-  Note: Another common convention is naming controller files without the word `controller` in the file name such as `avengers.js` instead of `avengers.controller.js`. All other conventions still hold using a suffix of the type. Controllers are the most common type of component so this just saves typing and is still easily identifiable. I recommend you choose 1 convention and be consistent for your team. My preference is `avengers.controller.js` identifying the `AvengersController`.
-
-    ```javascript
-    /**
-     * recommended
-     */
-    // Controllers
-    avengers.js
-    avengers.spec.js
-    ```
-
+    
 ### Test File Names
 ###### [Style [Y122](#style-y122)]
 
@@ -2029,8 +1836,8 @@
     /**
      * recommended
      */
-    avengers.controller.spec.js
-    logger.service.spec.js
+    avengersCtrl.controller.spec.js
+    loggerSvc.service.spec.js
     avengers.routes.spec.js
     avenger-profile.directive.spec.js
     ```
@@ -2038,7 +1845,7 @@
 ### Controller Names
 ###### [Style [Y123](#style-y123)] [ESLint [controller-name](https://github.com/Gillespie59/eslint-plugin-angularjs/blob/HEAD/docs/controller-name.md)]
 
-  - Use consistent names for all controllers named after their feature. Use UpperCamelCase for controllers, as they are constructors.
+  - Use consistent names for all controllers named after their feature. Use camel case for controllers, suffixed by "Ctrl".
 
     *Why?*: Provides a consistent way to quickly identify and reference controllers.
 
@@ -2052,17 +1859,17 @@
     // avengers.controller.js
     angular
         .module
-        .controller('HeroAvengersController', HeroAvengersController);
+        .controller('HeroAvengersCtrl', HeroAvengersCtrl);
 
-    function HeroAvengersController() { }
+    function HeroAvengersCtrl() { }
     ```
 
 ### Controller Name Suffix
 ###### [Style [Y124](#style-y124)] [ESLint [controller-name](https://github.com/Gillespie59/eslint-plugin-angularjs/blob/HEAD/docs/controller-name.md)]
 
-  - Append the controller name with the suffix `Controller`.
+  - Append the controller name with the suffix `Ctrl`.
 
-    *Why?*: The `Controller` suffix is more commonly used and is more explicitly descriptive.
+    *Why?*: The `Ctrl` suffix is more commonly used and is more explicitly descriptive.
 
     ```javascript
     /**
@@ -2072,15 +1879,15 @@
     // avengers.controller.js
     angular
         .module
-        .controller('AvengersController', AvengersController);
+        .controller('avengersCtrl', avengersCtrl);
 
-    function AvengersController() { }
+    function avengersCtrl() { }
     ```
 
 ### Factory and Service Names
 ###### [Style [Y125](#style-y125)] [ESLint [constant-name](https://github.com/Gillespie59/eslint-plugin-angularjs/blob/HEAD/docs/constant-name.md)] [ESLint [factory-name](https://github.com/Gillespie59/eslint-plugin-angularjs/blob/HEAD/docs/factory-name.md)] [ESLint [provider-name](https://github.com/Gillespie59/eslint-plugin-angularjs/blob/HEAD/docs/provider-name.md)] [ESLint [service-name](https://github.com/Gillespie59/eslint-plugin-angularjs/blob/HEAD/docs/service-name.md)] [ESLint [value-name](https://github.com/Gillespie59/eslint-plugin-angularjs/blob/HEAD/docs/value-name.md)]
 
-  - Use consistent names for all factories and services named after their feature. Use camel-casing for services and factories. Avoid prefixing factories and services with `$`. Only suffix service and factories with `Service` when it is not clear what they are (i.e. when they are nouns).
+  - Use consistent names for all factories and services named after their feature. Use camel-casing for services and factories. Avoid prefixing factories and services with `$`. Only suffix service and factories with `Svc` when it is not clear what they are (i.e. when they are nouns).
 
     *Why?*: Provides a consistent way to quickly identify and reference factories.
 
@@ -2088,7 +1895,7 @@
 
     *Why?*: Clear service names such as `logger` do not require a suffix.
 
-    *Why?*: Service names such as `avengers` are nouns and require a suffix and should be named `avengersService`.
+    *Why?*: Service names such as `avengers` are nouns and require a suffix and should be named `avengerSvc`.
 
     ```javascript
     /**
@@ -2108,25 +1915,25 @@
      * recommended
      */
 
-    // credit.service.js
+    // creditSvc.service.js
     angular
         .module
-        .factory('creditService', creditService);
+        .factory('creditSvc', creditSvc);
 
-    function creditService() { }
+    function creditSvc() { }
 
-    // customer.service.js
+    // customerSvc.service.js
     angular
         .module
-        .service('customerService', customerService);
+        .service('customerSvc', customerSvc);
 
-    function customerService() { }
+    function customerSvc() { }
     ```
 
 ### Directive Component Names
 ###### [Style [Y126](#style-y126)] [ESLint [directive-name](https://github.com/Gillespie59/eslint-plugin-angularjs/blob/HEAD/docs/directive-name.md)]
 
-  - Use consistent names for all directives using camelCase. Use a short prefix to describe the area that the directives belong (some example are company prefix or project prefix).
+  - Use consistent names for all directives using camelCase. 
 
     *Why?*: Provides a consistent way to quickly identify and reference components.
 
@@ -2138,11 +1945,11 @@
     // avenger-profile.directive.js
     angular
         .module
-        .directive('xxAvengerProfile', xxAvengerProfile);
+        .directive('avengerProfile', xxAvengerProfile);
 
-    // usage is <xx-avenger-profile> </xx-avenger-profile>
+    // usage is <avenger-profile> </avenger-profile>
 
-    function xxAvengerProfile() { }
+    function avengerProfile() { }
     ```
 
 ### Modules
