@@ -2,7 +2,10 @@
 
 ## Table of Contents
 
+  1. [Project Structure](#project-structure)
+  1. [Project Structure LIFT Principle](#project-structure-lift-principle)
   1. [Single Responsibility](#single-responsibility)
+  1. [Modularity](#modularity)
   1. [IIFE](#iife)
   1. [Modules](#modules)
   1. [Controllers](#controllers)
@@ -14,9 +17,6 @@
   1. [Minification and Annotation](#minification-and-annotation)
   1. [Exception Handling](#exception-handling)
   1. [Naming](#naming)
-  1. [Application Structure LIFT Principle](#application-structure-lift-principle)
-  1. [Project Structure](#application-structure)
-  1. [Modularity](#modularity)
   1. [Startup Logic](#startup-logic)
   1. [Angular $ Wrapper Services](#angular--wrapper-services)
   1. [Testing](#testing)
@@ -24,6 +24,209 @@
   1. [Comments](#comments)
   1. [Filters](#filters)
   1. [Angular Docs](#angular-docs)
+
+## Project Structure
+### Velocify Standard Project Structures
+Glossary:
+  - **components**: directives, including the associated controllers, htmls, less files, test specs, etc, that are *not* navigable by URL
+  - **utils**: services and factories
+  - **dist**: the compilation target folder
+  - **views***: directives and their associated files, that *are* navigable by URL
+    ```javascript
+    /**
+     * NPM package project
+     */
+
+    /
+        data-mocks/
+        dist/
+        fonts/
+        src/
+            dialerReports.config.js
+            dialerReports.less
+            dialerReports.module.js
+            components/
+                charts/
+                    dashCharts.directive.js
+                    dashCharts.html
+                    dashCharts.less
+                    ...
+                ...
+            utils/
+                dashboardSvc.service.js
+                dashboardSvc.service.spec.js
+                alertSvc.service.js
+                alertSvc.service.spec.js
+                ...
+            views/
+                callHistory/
+                    dashCallHistory.html
+                    dashCallHistory.js
+                    ...
+                ...
+    ```
+    ```javascript
+    /**
+     * Application project
+     */
+
+    /
+        leadManager.module.js
+        data-mocks/
+        dist/
+        fonts/
+        global-styles/
+        modules/
+            marketing/
+                marketing.config.js
+                marketing.less
+                marketing.module.js
+                components/
+                  card/
+                      marketingCardColumnDefs.config.js
+                      marketingCard.directive.js
+                      marketingCard.html
+                      marketingCard.less
+                  ...
+                views/
+                    events/
+                        eventConfirm.directive.js
+                        eventConfirm.html
+                    list/
+                        eventList.directive.js
+                        eventList.html
+                    ...
+            utils/
+                formatHelperSvc.service.js
+                formatHelperSvc.service.spec.js
+                responsiveSizingSvc.service.js
+                responsiveSizingSvc.service.spec.js
+                ...
+            ...
+    ```
+### Overall Guidelines
+###### [Style [Y150](#style-y150)]
+
+  - Have a near term view of implementation and a long term vision. In other words, start small but keep in mind on where the app is heading down the road. All of the app's code goes in a root folder named `app`. All content is 1 feature per file. Each controller, service, module, view is in its own file. All 3rd party vendor scripts are stored in another root folder and not in the `app` folder. I didn't write them and I don't want them cluttering my app (`bower_components`, `scripts`, `lib`).
+
+    Note: Find more details and reasoning behind the structure at [this original post on application structure](http://www.johnpapa.net/angular-app-structuring-guidelines/).
+
+### Folders-by-Feature Structure
+###### [Style [Y152](#style-y152)]
+
+  - Create folders named for the feature they represent. When a folder grows to contain more than 7 files, start to consider creating a folder for them. Your threshold may be different, so adjust as needed.
+
+    *Why?*: A developer can locate the code, identify what each file represents at a glance, the structure is flat as can be, and there is no repetitive nor redundant names.
+
+    *Why?*: The LIFT guidelines are all covered.
+
+    *Why?*: Helps reduce the app from becoming cluttered through organizing the content and keeping them aligned with the LIFT guidelines.
+
+    *Why?*: When there are a lot of files (10+) locating them is easier with a consistent folder structures and more difficult in flat structures.
+
+**[Back to top](#table-of-contents)**
+
+## Project Structure LIFT Principle
+### LIFT
+###### [Style [Y140](#style-y140)]
+
+  - Structure your app such that you can `L`ocate your code quickly, `I`dentify the code at a glance, keep the `F`lattest structure you can, and `T`ry to stay DRY. The structure should follow these 4 basic guidelines.
+
+    *Why LIFT?*: Provides a consistent structure that scales well, is modular, and makes it easier to increase developer efficiency by finding code quickly. Another way to check your app structure is to ask yourself: How quickly can you open and work in all of the related files for a feature?
+
+    When I find my structure is not feeling comfortable, I go back and revisit these LIFT guidelines
+
+    1. `L`ocating our code is easy
+    2. `I`dentify code at a glance
+    3. `F`lat structure as long as we can
+    4. `T`ry to stay DRY (Don’t Repeat Yourself) or T-DRY
+
+### Locate
+###### [Style [Y141](#style-y141)]
+
+  - Make locating your code intuitive, simple and fast.
+
+    *Why?*: I find this to be super important for a project. If the team cannot find the files they need to work on quickly, they will not be able to work as efficiently as possible, and the structure needs to change. You may not know the file name or where its related files are, so putting them in the most intuitive locations and near each other saves a ton of time. A descriptive folder structure can help with this.
+
+### Identify
+###### [Style [Y142](#style-y142)]
+
+  - When you look at a file you should instantly know what it contains and represents.
+
+    *Why?*: You spend less time hunting and pecking for code, and become more efficient. If this means you want longer file names, then so be it. Be descriptive with file names and keeping the contents of the file to exactly 1 component. Avoid files with multiple controllers, multiple services, or a mixture. There are deviations of the 1 per file rule when I have a set of very small features that are all related to each other, they are still easily identifiable.
+
+### Flat
+###### [Style [Y143](#style-y143)]
+
+  - Keep a flat folder structure as long as possible. When you get to 7+ files, begin considering separation.
+
+    *Why?*: Nobody wants to search 7 levels of folders to find a file. Think about menus on web sites … anything deeper than 2 should take serious consideration. In a folder structure there is no hard and fast number rule, but when a folder has 7-10 files, that may be time to create subfolders. Base it on your comfort level. Use a flatter structure until there is an obvious value (to help the rest of LIFT) in creating a new folder.
+
+### T-DRY (Try to Stick to DRY)
+###### [Style [Y144](#style-y144)]
+
+  - Be DRY, but don't go nuts and sacrifice readability.
+
+    *Why?*: Being DRY is important, but not crucial if it sacrifices the others in LIFT, which is why I call it T-DRY. I don’t want to type session-view.html for a view because, well, it’s obviously a view. If it is not obvious or by convention, then I name it.
+
+**[Back to top](#table-of-contents)**
+
+## Modularity
+
+### Many Small, Self Contained Modules
+###### [Style [Y160](#style-y160)]
+
+  - Create small modules that encapsulate one responsibility.
+
+    *Why?*: Modular applications make it easy to plug and go as they allow the development teams to build vertical slices of the applications and roll out incrementally. This means we can plug in new features as we develop them.
+
+### Create an App Module
+###### [Style [Y161](#style-y161)]
+
+  - Create an application root module whose role is to pull together all of the modules and features of your application. Name this for your application.
+
+    *Why?*: Angular encourages modularity and separation patterns. Creating an application root module whose role is to tie your other modules together provides a very straightforward way to add or remove modules from your application.
+
+### Keep the App Module Thin
+###### [Style [Y162](#style-y162)]
+
+  - Only put logic for pulling together the app in the application module. Leave features in their own modules.
+
+    *Why?*: Adding additional roles to the application root to get remote data, display views, or other logic not related to pulling the app together muddies the app module and make both sets of features harder to reuse or turn off.
+
+    *Why?*: The app module becomes a manifest that describes which modules help define the application.
+
+### Feature Areas are Modules
+###### [Style [Y163](#style-y163)]
+
+  - Create modules that represent feature areas, such as layout, reusable and shared services, dashboards, and app specific features (e.g. customers, admin, sales).
+
+    *Why?*: Self contained modules can be added to the application with little or no friction.
+
+    *Why?*: Sprints or iterations can focus on feature areas and turn them on at the end of the sprint or iteration.
+
+    *Why?*: Separating feature areas into modules makes it easier to test the modules in isolation and reuse code.
+
+### Reusable Blocks are Modules
+###### [Style [Y164](#style-y164)]
+
+  - Create modules that represent reusable application blocks for common services such as exception handling, logging, diagnostics, security, and local data stashing.
+
+    *Why?*: These types of features are needed in many applications, so by keeping them separated in their own modules they can be application generic and be reused across applications.
+
+### Module Dependencies
+###### [Style [Y165](#style-y165)]
+
+  - The application root module should depend on only URL-navigable feature modules
+  - Feature modules should depend on all modules that it directly uses
+  
+    *Why?*: The failure to include a dependency in a feature module is not hidden by the fact that the root module references that dependency.
+    
+    *Why?*: The feature module is more self-contained and easier to detach into its own package.
+    
+    *Why?*: You are not loading more modules than necessary.
+
+**[Back to top](#table-of-contents)**
 
 ## Single Responsibility
 
@@ -1967,209 +2170,6 @@
 ###### [Style [Y129](#style-y129)]
 
   - Route configuration goes into the .config.js file.
-
-**[Back to top](#table-of-contents)**
-
-## Application Structure LIFT Principle
-### LIFT
-###### [Style [Y140](#style-y140)]
-
-  - Structure your app such that you can `L`ocate your code quickly, `I`dentify the code at a glance, keep the `F`lattest structure you can, and `T`ry to stay DRY. The structure should follow these 4 basic guidelines.
-
-    *Why LIFT?*: Provides a consistent structure that scales well, is modular, and makes it easier to increase developer efficiency by finding code quickly. Another way to check your app structure is to ask yourself: How quickly can you open and work in all of the related files for a feature?
-
-    When I find my structure is not feeling comfortable, I go back and revisit these LIFT guidelines
-
-    1. `L`ocating our code is easy
-    2. `I`dentify code at a glance
-    3. `F`lat structure as long as we can
-    4. `T`ry to stay DRY (Don’t Repeat Yourself) or T-DRY
-
-### Locate
-###### [Style [Y141](#style-y141)]
-
-  - Make locating your code intuitive, simple and fast.
-
-    *Why?*: I find this to be super important for a project. If the team cannot find the files they need to work on quickly, they will not be able to work as efficiently as possible, and the structure needs to change. You may not know the file name or where its related files are, so putting them in the most intuitive locations and near each other saves a ton of time. A descriptive folder structure can help with this.
-
-### Identify
-###### [Style [Y142](#style-y142)]
-
-  - When you look at a file you should instantly know what it contains and represents.
-
-    *Why?*: You spend less time hunting and pecking for code, and become more efficient. If this means you want longer file names, then so be it. Be descriptive with file names and keeping the contents of the file to exactly 1 component. Avoid files with multiple controllers, multiple services, or a mixture. There are deviations of the 1 per file rule when I have a set of very small features that are all related to each other, they are still easily identifiable.
-
-### Flat
-###### [Style [Y143](#style-y143)]
-
-  - Keep a flat folder structure as long as possible. When you get to 7+ files, begin considering separation.
-
-    *Why?*: Nobody wants to search 7 levels of folders to find a file. Think about menus on web sites … anything deeper than 2 should take serious consideration. In a folder structure there is no hard and fast number rule, but when a folder has 7-10 files, that may be time to create subfolders. Base it on your comfort level. Use a flatter structure until there is an obvious value (to help the rest of LIFT) in creating a new folder.
-
-### T-DRY (Try to Stick to DRY)
-###### [Style [Y144](#style-y144)]
-
-  - Be DRY, but don't go nuts and sacrifice readability.
-
-    *Why?*: Being DRY is important, but not crucial if it sacrifices the others in LIFT, which is why I call it T-DRY. I don’t want to type session-view.html for a view because, well, it’s obviously a view. If it is not obvious or by convention, then I name it.
-
-**[Back to top](#table-of-contents)**
-
-## Project Structure
-### Velocify Standard Project Structures
-Glossary:
-  - **components**: directives, including the associated controllers, htmls, less files, test specs, etc, that are *not* navigable by URL
-  - **utils**: services and factories
-  - **dist**: the compilation target folder
-  - **views***: directives and their associated files, that *are* navigable by URL
-    ```javascript
-    /**
-     * NPM package project
-     */
-
-    /
-        data-mocks/
-        dist/
-        fonts/
-        src/
-            dialerReports.config.js
-            dialerReports.less
-            dialerReports.module.js
-            components/
-                charts/
-                    dashCharts.directive.js
-                    dashCharts.html
-                    dashCharts.less
-                    ...
-                ...
-            utils/
-                dashboardSvc.service.js
-                dashboardSvc.service.spec.js
-                alertSvc.service.js
-                alertSvc.service.spec.js
-                ...
-            views/
-                callHistory/
-                    dashCallHistory.html
-                    dashCallHistory.js
-                    ...
-                ...
-    ```
-    ```javascript
-    /**
-     * Application project
-     */
-
-    /
-        leadManager.module.js
-        data-mocks/
-        dist/
-        fonts/
-        global-styles/
-        modules/
-            marketing/
-                marketing.config.js
-                marketing.less
-                marketing.module.js
-                components/
-                  card/
-                      marketingCardColumnDefs.config.js
-                      marketingCard.directive.js
-                      marketingCard.html
-                      marketingCard.less
-                  ...
-                views/
-                    events/
-                        eventConfirm.directive.js
-                        eventConfirm.html
-                    list/
-                        eventList.directive.js
-                        eventList.html
-                    ...
-            utils/
-                formatHelperSvc.service.js
-                formatHelperSvc.service.spec.js
-                responsiveSizingSvc.service.js
-                responsiveSizingSvc.service.spec.js
-                ...
-            ...
-    ```
-### Overall Guidelines
-###### [Style [Y150](#style-y150)]
-
-  - Have a near term view of implementation and a long term vision. In other words, start small but keep in mind on where the app is heading down the road. All of the app's code goes in a root folder named `app`. All content is 1 feature per file. Each controller, service, module, view is in its own file. All 3rd party vendor scripts are stored in another root folder and not in the `app` folder. I didn't write them and I don't want them cluttering my app (`bower_components`, `scripts`, `lib`).
-
-    Note: Find more details and reasoning behind the structure at [this original post on application structure](http://www.johnpapa.net/angular-app-structuring-guidelines/).
-
-### Folders-by-Feature Structure
-###### [Style [Y152](#style-y152)]
-
-  - Create folders named for the feature they represent. When a folder grows to contain more than 7 files, start to consider creating a folder for them. Your threshold may be different, so adjust as needed.
-
-    *Why?*: A developer can locate the code, identify what each file represents at a glance, the structure is flat as can be, and there is no repetitive nor redundant names.
-
-    *Why?*: The LIFT guidelines are all covered.
-
-    *Why?*: Helps reduce the app from becoming cluttered through organizing the content and keeping them aligned with the LIFT guidelines.
-
-    *Why?*: When there are a lot of files (10+) locating them is easier with a consistent folder structures and more difficult in flat structures.
-
-**[Back to top](#table-of-contents)**
-
-## Modularity
-
-### Many Small, Self Contained Modules
-###### [Style [Y160](#style-y160)]
-
-  - Create small modules that encapsulate one responsibility.
-
-    *Why?*: Modular applications make it easy to plug and go as they allow the development teams to build vertical slices of the applications and roll out incrementally. This means we can plug in new features as we develop them.
-
-### Create an App Module
-###### [Style [Y161](#style-y161)]
-
-  - Create an application root module whose role is to pull together all of the modules and features of your application. Name this for your application.
-
-    *Why?*: Angular encourages modularity and separation patterns. Creating an application root module whose role is to tie your other modules together provides a very straightforward way to add or remove modules from your application.
-
-### Keep the App Module Thin
-###### [Style [Y162](#style-y162)]
-
-  - Only put logic for pulling together the app in the application module. Leave features in their own modules.
-
-    *Why?*: Adding additional roles to the application root to get remote data, display views, or other logic not related to pulling the app together muddies the app module and make both sets of features harder to reuse or turn off.
-
-    *Why?*: The app module becomes a manifest that describes which modules help define the application.
-
-### Feature Areas are Modules
-###### [Style [Y163](#style-y163)]
-
-  - Create modules that represent feature areas, such as layout, reusable and shared services, dashboards, and app specific features (e.g. customers, admin, sales).
-
-    *Why?*: Self contained modules can be added to the application with little or no friction.
-
-    *Why?*: Sprints or iterations can focus on feature areas and turn them on at the end of the sprint or iteration.
-
-    *Why?*: Separating feature areas into modules makes it easier to test the modules in isolation and reuse code.
-
-### Reusable Blocks are Modules
-###### [Style [Y164](#style-y164)]
-
-  - Create modules that represent reusable application blocks for common services such as exception handling, logging, diagnostics, security, and local data stashing.
-
-    *Why?*: These types of features are needed in many applications, so by keeping them separated in their own modules they can be application generic and be reused across applications.
-
-### Module Dependencies
-###### [Style [Y165](#style-y165)]
-
-  - The application root module should depend on only URL-navigable feature modules
-  - Feature modules should depend on all modules that it directly uses
-  
-    *Why?*: The failure to include a dependency in a feature module is not hidden by the fact that the root module references that dependency.
-    
-    *Why?*: The feature module is more self-contained and easier to detach into its own package.
-    
-    *Why?*: You are not loading more modules than necessary.
 
 **[Back to top](#table-of-contents)**
 
