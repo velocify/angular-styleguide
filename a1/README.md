@@ -31,7 +31,7 @@ Glossary:
   - **components**: directives, including the associated controllers, htmls, less files, test specs, etc, that are *not* navigable by URL
   - **utils**: services and factories
   - **dist**: the compilation target folder
-  - **views***: directives and their associated files, that *are* navigable by URL
+  - **views**: directives and their associated files, that *are* navigable by URL
     ```javascript
     /**
      * NPM package project
@@ -104,26 +104,6 @@ Glossary:
                 ...
             ...
     ```
-### Overall Guidelines
-###### [Style [Y150](#style-y150)]
-
-  - Have a near term view of implementation and a long term vision. In other words, start small but keep in mind on where the app is heading down the road. All of the app's code goes in a root folder named `app`. All content is 1 feature per file. Each controller, service, module, view is in its own file. All 3rd party vendor scripts are stored in another root folder and not in the `app` folder. I didn't write them and I don't want them cluttering my app (`bower_components`, `scripts`, `lib`).
-
-    Note: Find more details and reasoning behind the structure at [this original post on application structure](http://www.johnpapa.net/angular-app-structuring-guidelines/).
-
-### Folders-by-Feature Structure
-###### [Style [Y152](#style-y152)]
-
-  - Create folders named for the feature they represent. When a folder grows to contain more than 7 files, start to consider creating a folder for them. Your threshold may be different, so adjust as needed.
-
-    *Why?*: A developer can locate the code, identify what each file represents at a glance, the structure is flat as can be, and there is no repetitive nor redundant names.
-
-    *Why?*: The LIFT guidelines are all covered.
-
-    *Why?*: Helps reduce the app from becoming cluttered through organizing the content and keeping them aligned with the LIFT guidelines.
-
-    *Why?*: When there are a lot of files (10+) locating them is easier with a consistent folder structures and more difficult in flat structures.
-
 **[Back to top](#table-of-contents)**
 
 ## Project Structure LIFT Principle
@@ -180,10 +160,10 @@ Glossary:
 
     *Why?*: Modular applications make it easy to plug and go as they allow the development teams to build vertical slices of the applications and roll out incrementally. This means we can plug in new features as we develop them.
 
-### Create an App Module
+### Create a Root Module
 ###### [Style [Y161](#style-y161)]
 
-  - Create an application root module whose role is to pull together all of the modules and features of your application. Name this for your application.
+  - Create a root module whose role is to pull together all of the modules and features of your application. Name this for your application.
 
     *Why?*: Angular encourages modularity and separation patterns. Creating an application root module whose role is to tie your other modules together provides a very straightforward way to add or remove modules from your application.
 
@@ -193,7 +173,6 @@ Glossary:
   - Only put logic for pulling together the app in the application module. Leave features in their own modules.
 
     *Why?*: Adding additional roles to the application root to get remote data, display views, or other logic not related to pulling the app together muddies the app module and make both sets of features harder to reuse or turn off.
-
     *Why?*: The app module becomes a manifest that describes which modules help define the application.
 
 ### Feature Areas are Modules
@@ -202,9 +181,7 @@ Glossary:
   - Create modules that represent feature areas, such as layout, reusable and shared services, dashboards, and app specific features (e.g. customers, admin, sales).
 
     *Why?*: Self contained modules can be added to the application with little or no friction.
-
     *Why?*: Sprints or iterations can focus on feature areas and turn them on at the end of the sprint or iteration.
-
     *Why?*: Separating feature areas into modules makes it easier to test the modules in isolation and reuse code.
 
 ### Reusable Blocks are Modules
@@ -221,9 +198,7 @@ Glossary:
   - Feature modules should depend on all modules that it directly uses
   
     *Why?*: The failure to include a dependency in a feature module is not hidden by the fact that the root module references that dependency.
-    
     *Why?*: The feature module is more self-contained and easier to detach into its own package.
-    
     *Why?*: You are not loading more modules than necessary.
 
 **[Back to top](#table-of-contents)**
@@ -237,9 +212,7 @@ Glossary:
   Exception: constants. You may declare as many constants as you like in a single file, as long as that file is dedicated to constants.
 
   *Why?*: One component per file promotes easier unit testing and mocking.
-
   *Why?*: One component per file makes it far easier to read, maintain, and avoid collisions with teams in source control.
-
   *Why?*: One component per file avoids hidden bugs that often arise when combining components in a file where they may share variables, create unwanted closures, or unwanted coupling with dependencies.
 
   The following example defines the `app` module and its dependencies, defines a controller, and defines a factory all in the same file.
@@ -296,13 +269,9 @@ Glossary:
   - Define small functions, no more than 75 LOC (less is better).
 
   *Why?*: Small functions are easier to test, especially when they do one thing and serve one purpose.
-
   *Why?*: Small functions promote reuse.
-
   *Why?*: Small functions are easier to read.
-
   *Why?*: Small functions are easier to maintain.
-
   *Why?*: Small functions help avoid hidden bugs that come with large functions that share variables with external scope, create unwanted closures, or unwanted coupling with dependencies.
 
 **[Back to top](#table-of-contents)**
@@ -315,7 +284,6 @@ Glossary:
   - Wrap Angular components in an Immediately Invoked Function Expression (IIFE).
 
   *Why?*: An IIFE removes variables from the global scope. This helps prevent variables and function declarations from living longer than expected in the global scope, which also helps avoid variable collisions.
-
   *Why?*: When your code is minified and bundled into a single file for deployment to a production server, you could have collisions of variables and many global variables. An IIFE protects you against both of these by providing variable scope for each file.
 
   ```javascript
@@ -501,9 +469,7 @@ Glossary:
   - Use the [`controllerAs`](http://www.johnpapa.net/do-you-like-your-angular-controllers-with-or-without-sugar/) syntax over the `classic controller with $scope` syntax.
 
   *Why?*: Controllers are constructed, "newed" up, and provide a single new instance, and the `controllerAs` syntax is closer to that of a JavaScript constructor than the `classic $scope syntax`.
-
   *Why?*: It promotes the use of binding to a "dotted" object in the View (e.g. `customer.name` instead of `name`), which is more contextual, easier to read, and avoids any reference issues that may occur without "dotting".
-
   *Why?*: Helps avoid using `$parent` calls in Views with nested controllers.
 
   ```html
@@ -528,7 +494,6 @@ Glossary:
   - The `controllerAs` syntax uses `this` inside controllers which gets bound to `$scope`
 
   *Why?*: `controllerAs` is syntactic sugar over `$scope`. You can still bind to the View and still access `$scope` methods.
-
   *Why?*: Helps avoid the temptation of using `$scope` methods inside a controller when it may otherwise be better to avoid them or move the method to a factory, and reference them from the controller. Consider using `$scope` in a controller only when needed. For example when publishing and subscribing events using [`$emit`](https://docs.angularjs.org/api/ng/type/$rootScope.Scope#$emit), [`$broadcast`](https://docs.angularjs.org/api/ng/type/$rootScope.Scope#$broadcast), or [`$on`](https://docs.angularjs.org/api/ng/type/$rootScope.Scope#$on).
 
   ```javascript
@@ -707,13 +672,9 @@ Glossary:
   - Use function declarations to hide implementation details. Keep your bindable members up top. When you need to bind a function in a controller, point it to a function declaration that appears later in the file. This is tied directly to the section Bindable Members Up Top. For more details see [this post](http://www.johnpapa.net/angular-function-declarations-function-expressions-and-readable-code/).
 
     *Why?*: Placing bindable members at the top makes it easy to read and helps you instantly identify which members of the controller can be bound and used in the View. (Same as above.)
-
     *Why?*: Placing the implementation details of a function later in the file moves that complexity out of view so you can see the important stuff up top.
-
     *Why?*: Function declarations are hoisted so there are no concerns over using a function before it is defined (as there would be with function expressions).
-
     *Why?*: You never have to worry with function declarations that moving `var a` before `var b` will break your code because `a` depends on `b`.
-
     *Why?*: Order is critical with function expressions
 
   ```javascript
@@ -782,11 +743,8 @@ Glossary:
   - Defer logic in a controller by delegating to services and factories.
 
     *Why?*: Logic may be reused by multiple controllers when placed within a service and exposed via a function.
-
     *Why?*: Logic in a service can more easily be isolated in a unit test, while the calling logic in the controller can be easily mocked.
-
     *Why?*: Removes dependencies and hides implementation details from the controller.
-
     *Why?*: Keeps the controller slim, trim, and focused.
 
   ```javascript
@@ -1203,7 +1161,6 @@ Glossary:
   - Create one directive per file. Name the file for the directive.
 
     *Why?*: It is easy to mash all the directives in one file, but difficult to then break those out so some are shared across apps, some across modules, some just for one module.
-
     *Why?*: One directive per file is easy to maintain.
 
     > Note: "**Best Practice**: Directives should clean up after themselves. You can use `element.on('$destroy', ...)` or `scope.$on('$destroy', ...)` to run a clean-up function when the directive is removed" ... from the Angular documentation.
