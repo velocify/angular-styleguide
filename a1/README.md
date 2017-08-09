@@ -15,20 +15,13 @@
   1. [Exception Handling](#exception-handling)
   1. [Naming](#naming)
   1. [Application Structure LIFT Principle](#application-structure-lift-principle)
-  1. [Application Structure](#application-structure)
+  1. [Project Structure](#application-structure)
   1. [Modularity](#modularity)
   1. [Startup Logic](#startup-logic)
   1. [Angular $ Wrapper Services](#angular--wrapper-services)
   1. [Testing](#testing)
   1. [Animations](#animations)
   1. [Comments](#comments)
-  1. [JSHint](#js-hint)
-  1. [JSCS](#jscs)
-  1. [Constants](#constants)
-  1. [File Templates and Snippets](#file-templates-and-snippets)
-  1. [Yeoman Generator](#yeoman-generator)
-  1. [Routing](#routing)
-  1. [Task Automation](#task-automation)
   1. [Filters](#filters)
   1. [Angular Docs](#angular-docs)
 
@@ -1973,7 +1966,7 @@
 ### Routes
 ###### [Style [Y129](#style-y129)]
 
-  - Separate route configuration into its own file. Examples might be `app.route.js` for the main module and `admin.route.js` for the `admin` module. Even in smaller apps I prefer this separation from the rest of the configuration.
+  - Route configuration goes into the .config.js file.
 
 **[Back to top](#table-of-contents)**
 
@@ -1999,24 +1992,6 @@
 
     *Why?*: I find this to be super important for a project. If the team cannot find the files they need to work on quickly, they will not be able to work as efficiently as possible, and the structure needs to change. You may not know the file name or where its related files are, so putting them in the most intuitive locations and near each other saves a ton of time. A descriptive folder structure can help with this.
 
-    ```
-    /bower_components
-    /client
-      /app
-        /avengers
-        /blocks
-          /exception
-          /logger
-        /core
-        /dashboard
-        /data
-        /layout
-        /widgets
-      /content
-      index.html
-    .bower.json
-    ```
-
 ### Identify
 ###### [Style [Y142](#style-y142)]
 
@@ -2040,21 +2015,91 @@
 
 **[Back to top](#table-of-contents)**
 
-## Application Structure
+## Project Structure
+### Velocify Standard Project Structures
+Glossary:
+  - **components**: directives, including the associated controllers, htmls, less files, test specs, etc, that are *not* navigable by URL
+  - **utils**: services and factories
+  - **dist**: the compilation target folder
+  - **views***: directives and their associated files, that *are* navigable by URL
+    ```javascript
+    /**
+     * NPM package project
+     */
 
+    /
+        data-mocks/
+        dist/
+        fonts/
+        src/
+            dialerReports.config.js
+            dialerReports.less
+            dialerReports.module.js
+            components/
+                charts/
+                    dashCharts.directive.js
+                    dashCharts.html
+                    dashCharts.less
+                    ...
+                ...
+            utils/
+                dashboardSvc.service.js
+                dashboardSvc.service.spec.js
+                alertSvc.service.js
+                alertSvc.service.spec.js
+                ...
+            views/
+                callHistory/
+                    dashCallHistory.html
+                    dashCallHistory.js
+                    ...
+                ...
+    ```
+    ```javascript
+    /**
+     * Application project
+     */
+
+    /
+        leadManager.module.js
+        data-mocks/
+        dist/
+        fonts/
+        global-styles/
+        modules/
+            marketing/
+                marketing.config.js
+                marketing.less
+                marketing.module.js
+                components/
+                  card/
+                      marketingCardColumnDefs.config.js
+                      marketingCard.directive.js
+                      marketingCard.html
+                      marketingCard.less
+                  ...
+                views/
+                    events/
+                        eventConfirm.directive.js
+                        eventConfirm.html
+                    list/
+                        eventList.directive.js
+                        eventList.html
+                    ...
+            utils/
+                formatHelperSvc.service.js
+                formatHelperSvc.service.spec.js
+                responsiveSizingSvc.service.js
+                responsiveSizingSvc.service.spec.js
+                ...
+            ...
+    ```
 ### Overall Guidelines
 ###### [Style [Y150](#style-y150)]
 
   - Have a near term view of implementation and a long term vision. In other words, start small but keep in mind on where the app is heading down the road. All of the app's code goes in a root folder named `app`. All content is 1 feature per file. Each controller, service, module, view is in its own file. All 3rd party vendor scripts are stored in another root folder and not in the `app` folder. I didn't write them and I don't want them cluttering my app (`bower_components`, `scripts`, `lib`).
 
     Note: Find more details and reasoning behind the structure at [this original post on application structure](http://www.johnpapa.net/angular-app-structuring-guidelines/).
-
-### Layout
-###### [Style [Y151](#style-y151)]
-
-  - Place components that define the overall layout of the application in a folder named `layout`. These may include a shell view and controller may act as the container for the app, navigation, menus, content areas, and other regions.
-
-    *Why?*: Organizes all layout in a single place re-used throughout the application.
 
 ### Folders-by-Feature Structure
 ###### [Style [Y152](#style-y152)]
@@ -2068,89 +2113,6 @@
     *Why?*: Helps reduce the app from becoming cluttered through organizing the content and keeping them aligned with the LIFT guidelines.
 
     *Why?*: When there are a lot of files (10+) locating them is easier with a consistent folder structures and more difficult in flat structures.
-
-    ```javascript
-    /**
-     * recommended
-     */
-
-    app/
-        app.module.js
-        app.config.js
-        components/
-            calendar.directive.js
-            calendar.directive.html
-            user-profile.directive.js
-            user-profile.directive.html
-        layout/
-            shell.html
-            shell.controller.js
-            topnav.html
-            topnav.controller.js
-        people/
-            attendees.html
-            attendees.controller.js
-            people.routes.js
-            speakers.html
-            speakers.controller.js
-            speaker-detail.html
-            speaker-detail.controller.js
-        services/
-            data.service.js
-            localstorage.service.js
-            logger.service.js
-            spinner.service.js
-        sessions/
-            sessions.html
-            sessions.controller.js
-            sessions.routes.js
-            session-detail.html
-            session-detail.controller.js
-    ```
-
-      ![Sample App Structure](https://raw.githubusercontent.com/johnpapa/angular-styleguide/master/a1/assets/modularity-2.png)
-
-      Note: Do not structure your app using folders-by-type. This requires moving to multiple folders when working on a feature and gets unwieldy quickly as the app grows to 5, 10 or 25+ views and controllers (and other features), which makes it more difficult than folder-by-feature to locate files.
-
-    ```javascript
-    /*
-    * avoid
-    * Alternative folders-by-type.
-    * I recommend "folders-by-feature", instead.
-    */
-
-    app/
-        app.module.js
-        app.config.js
-        app.routes.js
-        directives.js
-        controllers/
-            attendees.js
-            session-detail.js
-            sessions.js
-            shell.js
-            speakers.js
-            speaker-detail.js
-            topnav.js
-        directives/
-            calendar.directive.js
-            calendar.directive.html
-            user-profile.directive.js
-            user-profile.directive.html
-        services/
-            dataservice.js
-            localstorage.js
-            logger.js
-            spinner.js
-        views/
-            attendees.html
-            session-detail.html
-            sessions.html
-            shell.html
-            speakers.html
-            speaker-detail.html
-            topnav.html
-    ```
 
 **[Back to top](#table-of-contents)**
 
@@ -2200,21 +2162,14 @@
 ### Module Dependencies
 ###### [Style [Y165](#style-y165)]
 
-  - The application root module depends on the app specific feature modules and any shared or reusable modules.
-
-    ![Modularity and Dependencies](https://raw.githubusercontent.com/johnpapa/angular-styleguide/master/a1/assets/modularity-1.png)
-
-    *Why?*: The main app module contains a quickly identifiable manifest of the application's features.
-
-    *Why?*: Each feature area contains a manifest of what it depends on, so it can be pulled in as a dependency in other applications and still work.
-
-    *Why?*: Intra-App features such as shared data services become easy to locate and share from within `app.core` (choose your favorite name for this module).
-
-    Note: This is a strategy for consistency. There are many good options here. Choose one that is consistent, follows Angular's dependency rules, and is easy to maintain and scale.
-
-    > My structures vary slightly between projects but they all follow these guidelines for structure and modularity. The implementation may vary depending on the features and the team. In other words, don't get hung up on an exact like-for-like structure but do justify your structure using consistency, maintainability, and efficiency in mind.
-
-    > In a small app, you can also consider putting all the shared dependencies in the app module where the feature modules have no direct dependencies. This makes it easier to maintain the smaller application, but makes it harder to reuse modules outside of this application.
+  - The application root module should depend on only URL-navigable feature modules
+  - Feature modules should depend on all modules that it directly uses
+  
+    *Why?*: The failure to include a dependency in a feature module is not hidden by the fact that the root module references that dependency.
+    
+    *Why?*: The feature module is more self-contained and easier to detach into its own package.
+    
+    *Why?*: You are not loading more modules than necessary.
 
 **[Back to top](#table-of-contents)**
 
@@ -2290,9 +2245,12 @@
 ### $timeout and $interval
 ###### [Style [Y181](#style-y181)] [ESLint [document-service](https://github.com/Gillespie59/eslint-plugin-angularjs/blob/HEAD/docs/document-service.md)] [ESLint [timeout-service](https://github.com/Gillespie59/eslint-plugin-angularjs/blob/HEAD/docs/timeout-service.md)]
 
-  - Use [`$timeout`](https://docs.angularjs.org/api/ng/service/$timeout) and [`$interval`](https://docs.angularjs.org/api/ng/service/$interval) instead of `setTimeout` and `setInterval` .
-
-    *Why?*: These services are wrapped by Angular and more easily testable and handle Angular's digest cycle thus keeping data binding in sync.
+  - Use $timeout over $interval. Use $window.requestAnimationFrame over both (if targeting IE10+).
+  
+    *Why?*: $interval can cause huuuuuge memory leaks if it's not cleaned up properly.
+    *Why?*: $timeout is render blocking.
+    *Why?*: $window.requestAnimationFrame works with the browsers internal timer, making it the most performant.
+    *Why?*: These services are wrapped by Angular and more easily testable and handle Angular's digest cycle thus keeping data binding in sync.    
 
 **[Back to top](#table-of-contents)**
 
@@ -2329,11 +2287,9 @@ Unit testing helps maintain clean code, as such I included some of my recommenda
 ### Testing Library
 ###### [Style [Y191](#style-y191)]
 
-  - Use [Jasmine](http://jasmine.github.io/) or [Mocha](http://mochajs.org) for unit testing.
+  - Use [Jasmine](http://jasmine.github.io/) for unit testing.
 
-    *Why?*: Both Jasmine and Mocha are widely used in the Angular community. Both are stable, well maintained, and provide robust testing features.
-
-    Note: When using Mocha, also consider choosing an assert library such as [Chai](http://chaijs.com). I prefer Mocha.
+    *Why?*: Jasmine is widely used in the Angular community. It's stable, well maintained, and provides robust testing features.
 
 ### Test Runner
 ###### [Style [Y192](#style-y192)]
@@ -2403,9 +2359,7 @@ Unit testing helps maintain clean code, as such I included some of my recommenda
   - Use [Sinon](http://sinonjs.org/) for stubbing and spying.
 
     *Why?*: Sinon works well with both Jasmine and Mocha and extends the stubbing and spying features they offer.
-
     *Why?*: Sinon makes it easier to toggle between Jasmine and Mocha, if you want to try both.
-
     *Why?*: Sinon has descriptive messages when tests fail the assertions.
 
 ### Headless Browser
@@ -2420,28 +2374,9 @@ Unit testing helps maintain clean code, as such I included some of my recommenda
 ### Code Analysis
 ###### [Style [Y195](#style-y195)]
 
-  - Run JSHint on your tests.
+  - Run ESLint on your tests.
 
     *Why?*: Tests are code. JSHint can help identify code quality issues that may cause the test to work improperly.
-
-### Alleviate Globals for JSHint Rules on Tests
-###### [Style [Y196](#style-y196)]
-
-  - Relax the rules on your test code to allow for common globals such as `describe` and `expect`. Relax the rules for expressions, as Mocha uses these.
-
-    *Why?*: Your tests are code and require the same attention and code quality rules as all of your production code. However, global variables used by the testing framework, for example, can be relaxed by including this in your test specs.
-
-    ```javascript
-    /* jshint -W117, -W030 */
-    ```
-    Or you can add the following to your JSHint Options file.
-
-    ```javascript
-    "jasmine": true,
-    "mocha": true,
-    ```
-
-  ![Testing Tools](https://raw.githubusercontent.com/johnpapa/angular-styleguide/master/a1/assets/testing-tools.png)
 
 ### Organizing Tests
 ###### [Style [Y197](#style-y197)]
@@ -2510,7 +2445,8 @@ Unit testing helps maintain clean code, as such I included some of my recommenda
 ### jsDoc
 ###### [Style [Y220](#style-y220)]
 
-  - If planning to produce documentation, use [`jsDoc`](http://usejsdoc.org/) syntax to document function names, description, params and returns. Use `@namespace` and `@memberOf` to match your app structure.
+  - Use [`jsDoc`](http://usejsdoc.org/) on all public interfaces exposed by NPM packages, such as service methods and directive members.
+  - In all other cases, JsDoc is discretionary.
 
     *Why?*: You can generate (and regenerate) documentation from your code, instead of writing it from scratch.
 
@@ -2518,580 +2454,37 @@ Unit testing helps maintain clean code, as such I included some of my recommenda
 
     ```javascript
     /**
-     * Logger Factory
-     * @namespace Factories
+     * Logger Service
+     * @namespace Services
      */
-    (function() {
-      angular
-          .module('app')
-          .factory('logger', logger);
+    angular
+      .module('app')
+      .service('loggerSvc', logger);
+
+    /**
+     * @namespace Logger
+     * @desc Application wide logger
+     * @memberOf Factories
+     */
+    function logger($log) {
+      var service = {
+       logError: logError
+      };
+      return service;
 
       /**
-       * @namespace Logger
-       * @desc Application wide logger
-       * @memberOf Factories
+       * @name logError
+       * @desc Logs errors
+       * @param {String} msg Message to log
+       * @returns {String}
+       * @memberOf Factories.Logger
        */
-      function logger($log) {
-          var service = {
-             logError: logError
-          };
-          return service;
-
-          ////////////
-
-          /**
-           * @name logError
-           * @desc Logs errors
-           * @param {String} msg Message to log
-           * @returns {String}
-           * @memberOf Factories.Logger
-           */
-          function logError(msg) {
-              var loggedMsg = 'Error: ' + msg;
-              $log.error(loggedMsg);
-              return loggedMsg;
-          };
-      }
-    })();
-    ```
-
-**[Back to top](#table-of-contents)**
-
-## JS Hint
-
-### Use an Options File
-###### [Style [Y230](#style-y230)]
-
-  - Use JS Hint for linting your JavaScript and be sure to customize the JS Hint options file and include in source control. See the [JS Hint docs](http://jshint.com/docs/) for details on the options.
-
-    *Why?*: Provides a first alert prior to committing any code to source control.
-
-    *Why?*: Provides consistency across your team.
-
-    ```javascript
-    {
-        "bitwise": true,
-        "camelcase": true,
-        "curly": true,
-        "eqeqeq": true,
-        "esversion": 6,
-        "forin": true,
-        "freeze": true,
-        "immed": true,
-        "indent": 4,
-        "latedef": "nofunc",
-        "newcap": true,
-        "noarg": true,
-        "noempty": true,
-        "nonbsp": true,
-        "nonew": true,
-        "plusplus": false,
-        "quotmark": "single",
-        "undef": true,
-        "unused": false,
-        "strict": false,
-        "maxparams": 10,
-        "maxdepth": 5,
-        "maxstatements": 40,
-        "maxcomplexity": 8,
-        "maxlen": 120,
-        "asi": false,
-        "boss": false,
-        "debug": false,
-        "eqnull": true,
-        "esnext": false,
-        "evil": false,
-        "expr": false,
-        "funcscope": false,
-        "globalstrict": false,
-        "iterator": false,
-        "lastsemic": false,
-        "laxbreak": false,
-        "laxcomma": false,
-        "loopfunc": true,
-        "maxerr": 50,
-        "moz": false,
-        "multistr": false,
-        "notypeof": false,
-        "proto": false,
-        "scripturl": false,
-        "shadow": false,
-        "sub": true,
-        "supernew": false,
-        "validthis": false,
-        "noyield": false,
-
-        "browser": true,
-        "node": true,
-
-        "globals": {
-            "angular": false,
-            "$": false
-        }
+      function logError(msg) {
+        var loggedMsg = 'Error: ' + msg;
+        $log.error(loggedMsg);
+        return loggedMsg;
+      };
     }
-    ```
-
-**[Back to top](#table-of-contents)**
-
-## JSCS
-
-### Use an Options File
-###### [Style [Y235](#style-y235)]
-
-  - Use JSCS for checking your coding styles your JavaScript and be sure to customize the JSCS options file and include in source control. See the [JSCS docs](http://jscs.info/) for details on the options.
-
-    *Why?*: Provides a first alert prior to committing any code to source control.
-
-    *Why?*: Provides consistency across your team.
-
-    ```javascript
-    {
-        "excludeFiles": ["node_modules/**", "bower_components/**"],
-
-        "requireCurlyBraces": [
-            "if",
-            "else",
-            "for",
-            "while",
-            "do",
-            "try",
-            "catch"
-        ],
-        "requireOperatorBeforeLineBreak": true,
-        "requireCamelCaseOrUpperCaseIdentifiers": true,
-        "maximumLineLength": {
-          "value": 100,
-          "allowComments": true,
-          "allowRegex": true
-        },
-        "validateIndentation": 4,
-        "validateQuoteMarks": "'",
-
-        "disallowMultipleLineStrings": true,
-        "disallowMixedSpacesAndTabs": true,
-        "disallowTrailingWhitespace": true,
-        "disallowSpaceAfterPrefixUnaryOperators": true,
-        "disallowMultipleVarDecl": null,
-
-        "requireSpaceAfterKeywords": [
-          "if",
-          "else",
-          "for",
-          "while",
-          "do",
-          "switch",
-          "return",
-          "try",
-          "catch"
-        ],
-        "requireSpaceBeforeBinaryOperators": [
-            "=", "+=", "-=", "*=", "/=", "%=", "<<=", ">>=", ">>>=",
-            "&=", "|=", "^=", "+=",
-
-            "+", "-", "*", "/", "%", "<<", ">>", ">>>", "&",
-            "|", "^", "&&", "||", "===", "==", ">=",
-            "<=", "<", ">", "!=", "!=="
-        ],
-        "requireSpaceAfterBinaryOperators": true,
-        "requireSpacesInConditionalExpression": true,
-        "requireSpaceBeforeBlockStatements": true,
-        "requireLineFeedAtFileEnd": true,
-        "disallowSpacesInsideObjectBrackets": "all",
-        "disallowSpacesInsideArrayBrackets": "all",
-        "disallowSpacesInsideParentheses": true,
-
-        "jsDoc": {
-            "checkAnnotations": true,
-            "checkParamNames": true,
-            "requireParamTypes": true,
-            "checkReturnTypes": true,
-            "checkTypes": true
-        },
-
-        "disallowMultipleLineBreaks": true,
-
-        "disallowCommaBeforeLineBreak": null,
-        "disallowDanglingUnderscores": null,
-        "disallowEmptyBlocks": null,
-        "disallowTrailingComma": null,
-        "requireCommaBeforeLineBreak": null,
-        "requireDotNotation": null,
-        "requireMultipleVarDecl": null,
-        "requireParenthesesAroundIIFE": true
-    }
-    ```
-
-**[Back to top](#table-of-contents)**
-
-## Constants
-
-### Vendor Globals
-###### [Style [Y240](#style-y240)]
-
-  - Create an Angular Constant for vendor libraries' global variables.
-
-    *Why?*: Provides a way to inject vendor libraries that otherwise are globals. This improves code testability by allowing you to more easily know what the dependencies of your components are (avoids leaky abstractions). It also allows you to mock these dependencies, where it makes sense.
-
-    ```javascript
-    // constants.js
-
-    /* global toastr:false, moment:false */
-    (function() {
-        'use strict';
-
-        angular
-            .module('app.core')
-            .constant('toastr', toastr)
-            .constant('moment', moment);
-    })();
-    ```
-
-###### [Style [Y241](#style-y241)]
-
-  - Use constants for values that do not change and do not come from another service. When constants are used only for a module that may be reused in multiple applications, place constants in a file per module named after the module. Until this is required, keep constants in the main module in a `constants.js` file.
-
-    *Why?*: A value that may change, even infrequently, should be retrieved from a service so you do not have to change the source code. For example, a url for a data service could be placed in a constants but a better place would be to load it from a web service.
-
-    *Why?*: Constants can be injected into any angular component, including providers.
-
-    *Why?*: When an application is separated into modules that may be reused in other applications, each stand-alone module should be able to operate on its own including any dependent constants.
-
-    ```javascript
-    // Constants used by the entire app
-    angular
-        .module('app.core')
-        .constant('moment', moment);
-
-    // Constants used only by the sales module
-    angular
-        .module('app.sales')
-        .constant('events', {
-            ORDER_CREATED: 'event_order_created',
-            INVENTORY_DEPLETED: 'event_inventory_depleted'
-        });
-    ```
-
-**[Back to top](#table-of-contents)**
-
-## File Templates and Snippets
-Use file templates or snippets to help follow consistent styles and patterns. Here are templates and/or snippets for some of the web development editors and IDEs.
-
-### Sublime Text
-###### [Style [Y250](#style-y250)]
-
-  - Angular snippets that follow these styles and guidelines.
-
-    - Download the [Sublime Angular snippets](assets/sublime-angular-snippets?raw=true)
-    - Place it in your Packages folder
-    - Restart Sublime
-    - In a JavaScript file type these commands followed by a `TAB`
-
-    ```javascript
-    ngcontroller // creates an Angular controller
-    ngdirective  // creates an Angular directive
-    ngfactory    // creates an Angular factory
-    ngmodule     // creates an Angular module
-    ngservice    // creates an Angular service
-    ngfilter     // creates an Angular filter
-    ```
-
-### Visual Studio
-###### [Style [Y251](#style-y251)]
-
-  - Angular file templates that follow these styles and guidelines can be found at [SideWaffle](http://www.sidewaffle.com)
-
-    - Download the [SideWaffle](http://www.sidewaffle.com) Visual Studio extension (vsix file)
-    - Run the vsix file
-    - Restart Visual Studio
-
-### WebStorm
-###### [Style [Y252](#style-y252)]
-
-  - Angular live templates that follow these styles and guidelines.
-
-    - Download the [webstorm-angular-live-templates.xml](assets/webstorm-angular-live-templates/webstorm-angular-live-templates.xml?raw=true)
-    - Place it in your [templates folder](https://www.jetbrains.com/webstorm/help/project-and-ide-settings.html)
-    - Restart WebStorm
-    - In a JavaScript file type these commands followed by a `TAB`:
-
-    ```javascript
-    // These are full file snippets containing an IIFE
-    ngapp     // creates an Angular module setter
-    ngcontroller // creates an Angular controller
-    ngdirective  // creates an Angular directive
-    ngfactory    // creates an Angular factory
-    ngfilter     // creates an Angular filter
-    ngservice    // creates an Angular service
-
-    // These are partial snippets intended to be chained
-    ngconfig     // defines a configuration phase function
-    ngmodule     // creates an Angular module getter
-    ngroute      // defines an Angular ngRoute 'when' definition
-    ngrun        // defines a run phase function
-    ngstate      // creates an Angular UI Router state definition
-    ```
-
-  *Individual templates are also available for download within the [webstorm-angular-live-templates](assets/webstorm-angular-live-templates?raw=true) folder*
-
-### Atom
-###### [Style [Y253](#style-y253)]
-
-  - Angular snippets that follow these styles and guidelines.
-    ```
-    apm install angularjs-styleguide-snippets
-    ```
-    or
-    - Open Atom, then open the Package Manager (Packages -> Settings View -> Install Packages/Themes)
-    - Search for the package 'angularjs-styleguide-snippets'
-    - Click 'Install' to install the package
-
-  - In a JavaScript file type these commands followed by a `TAB`
-
-    ```javascript
-    ngcontroller // creates an Angular controller
-    ngdirective // creates an Angular directive
-    ngfactory // creates an Angular factory
-    ngmodule // creates an Angular module
-    ngservice // creates an Angular service
-    ngfilter // creates an Angular filter
-    ```
-
-### Brackets
-###### [Style [Y254](#style-y254)]
-
-  - Angular snippets that follow these styles and guidelines.
-    - Download the [Brackets Angular snippets](assets/brackets-angular-snippets.yaml?raw=true)
-    - Brackets Extension manager ( File > Extension manager )
-    - Install ['Brackets Snippets (by edc)'](https://github.com/chuyik/brackets-snippets)
-    - Click the light bulb in brackets' right gutter
-    - Click `Settings` and then `Import`
-    - Choose the file and select to skip or override
-    - Click `Start Import`
-
-  - In a JavaScript file type these commands followed by a `TAB`
-
-    ```javascript
-    // These are full file snippets containing an IIFE
-    ngcontroller // creates an Angular controller
-    ngdirective  // creates an Angular directive
-    ngfactory    // creates an Angular factory
-    ngapp        // creates an Angular module setter
-    ngservice    // creates an Angular service
-    ngfilter     // creates an Angular filter
-
-    // These are partial snippets intended to chained
-    ngmodule     // creates an Angular module getter
-    ngstate      // creates an Angular UI Router state definition
-    ngconfig     // defines a configuration phase function
-    ngrun        // defines a run phase function
-    ngwhen      // defines an Angular ngRoute 'when' definition
-    ngtranslate  // uses $translate service with its promise
-    ```
-
-### vim
-###### [Style [Y255](#style-y255)]
-
-  - vim snippets that follow these styles and guidelines.
-
-    - Download the [vim Angular snippets](assets/vim-angular-snippets?raw=true)
-    - set [neosnippet.vim](https://github.com/Shougo/neosnippet.vim)
-    - copy snippets to snippet directory
-
-  - vim UltiSnips snippets that follow these styles and guidelines.
-
-    - Download the [vim Angular UltiSnips snippets](assets/vim-angular-ultisnips?raw=true)
-    - set [UltiSnips](https://github.com/SirVer/ultisnips)
-    - copy snippets to UltiSnips directory
-
-    ```javascript
-    ngcontroller // creates an Angular controller
-    ngdirective  // creates an Angular directive
-    ngfactory    // creates an Angular factory
-    ngmodule     // creates an Angular module
-    ngservice    // creates an Angular service
-    ngfilter     // creates an Angular filter
-    ```
-
-### Visual Studio Code
-
-###### [Style [Y256](#style-y256)]
-
-  - [Visual Studio Code](https://code.visualstudio.com/) snippets that follow these styles and guidelines.
-
-    - Download the [VS Code Angular snippets](assets/vscode-snippets/javascript.json?raw=true)
-    - copy snippets to snippet directory, or alternatively copy and paste the snippets into your existing ones
-
-    ```javascript
-    ngcontroller // creates an Angular controller
-    ngdirective  // creates an Angular directive
-    ngfactory    // creates an Angular factory
-    ngmodule     // creates an Angular module
-    ngservice    // creates an Angular service
-    ```
-
-### Emacs
-###### [Style [Y257](#style-y257)]
-
-  - [Emacs](https://www.gnu.org/software/emacs/) snippets that follow these styles and guidelines.
-
-    - Download the [Emacs Angular snippets](assets/emacs-angular-snippets?raw=true)
-
-      Note that yasnippet categorizes snippets by major mode, and there are several Emacs major modes for editing Javascript code. The snippets are in `js2-mode`, and the other directories contain only a dotfile to reference them there.
-
-    - install [yasnippet](https://github.com/capitaomorte/yasnippet) (`M-x package-install RET yasnippet RET`)
-    - copy snippets to snippet directory, or modify your Emacs init to add snippet directory to `yas-snippet-dirs`
-
-    ```javascript
-    ngcontroller // creates an Angular controller
-    ngdirective  // creates an Angular directive
-    ngfactory    // creates an Angular factory
-    ngmodule     // creates an Angular module
-    ngservice    // creates an Angular service
-    ngfilter     // creates an Angular filter
-    ```
-    
-**[Back to top](#table-of-contents)**
-
-## Yeoman Generator
-###### [Style [Y260](#style-y260)]
-
-You can use the [HotTowel yeoman generator](http://jpapa.me/yohottowel) to create an app that serves as a starting point for Angular that follows this style guide.
-
-1. Install generator-hottowel
-
-  ```
-  npm install -g generator-hottowel
-  ```
-
-2. Create a new folder and change directory to it
-
-  ```
-  mkdir myapp
-  cd myapp
-  ```
-
-3. Run the generator
-
-  ```
-  yo hottowel helloWorld
-  ```
-
-**[Back to top](#table-of-contents)**
-
-## Routing
-Client-side routing is important for creating a navigation flow between views and composing views that are made of many smaller templates and directives.
-
-###### [Style [Y270](#style-y270)]
-
-  - Use the [AngularUI Router](http://angular-ui.github.io/ui-router/) for client-side routing.
-
-    *Why?*: UI Router offers all the features of the Angular router plus a few additional ones including nested routes and states.
-
-    *Why?*: The syntax is quite similar to the Angular router and is easy to migrate to UI Router.
-
-  - Note: You can use a provider such as the `routerHelperProvider` shown below to help configure states across files, during the run phase.
-
-    ```javascript
-    // customers.routes.js
-    angular
-        .module('app.customers')
-        .run(appRun);
-
-    /* @ngInject */
-    function appRun(routerHelper) {
-        routerHelper.configureStates(getStates());
-    }
-
-    function getStates() {
-        return [
-            {
-                state: 'customer',
-                config: {
-                    abstract: true,
-                    template: '<ui-view class="shuffle-animation"/>',
-                    url: '/customer'
-                }
-            }
-        ];
-    }
-    ```
-
-    ```javascript
-    // routerHelperProvider.js
-    angular
-        .module('blocks.router')
-        .provider('routerHelper', routerHelperProvider);
-
-    routerHelperProvider.$inject = ['$locationProvider', '$stateProvider', '$urlRouterProvider'];
-    /* @ngInject */
-    function routerHelperProvider($locationProvider, $stateProvider, $urlRouterProvider) {
-        /* jshint validthis:true */
-        this.$get = RouterHelper;
-
-        $locationProvider.html5Mode(true);
-
-        RouterHelper.$inject = ['$state'];
-        /* @ngInject */
-        function RouterHelper($state) {
-            var hasOtherwise = false;
-
-            var service = {
-                configureStates: configureStates,
-                getStates: getStates
-            };
-
-            return service;
-
-            ///////////////
-
-            function configureStates(states, otherwisePath) {
-                states.forEach(function(state) {
-                    $stateProvider.state(state.state, state.config);
-                });
-                if (otherwisePath && !hasOtherwise) {
-                    hasOtherwise = true;
-                    $urlRouterProvider.otherwise(otherwisePath);
-                }
-            }
-
-            function getStates() { return $state.get(); }
-        }
-    }
-    ```
-
-###### [Style [Y271](#style-y271)]
-
-  - Define routes for views in the module where they exist. Each module should contain the routes for the views in the module.
-
-    *Why?*: Each module should be able to stand on its own.
-
-    *Why?*: When removing a module or adding a module, the app will only contain routes that point to existing views.
-
-    *Why?*: This makes it easy to enable or disable portions of an application without concern over orphaned routes.
-
-**[Back to top](#table-of-contents)**
-
-## Task Automation
-Use [Gulp](http://gulpjs.com) or [Grunt](http://gruntjs.com) for creating automated tasks.  Gulp leans to code over configuration while Grunt leans to configuration over code. I personally prefer Gulp as I feel it is easier to read and write, but both are excellent.
-
-> Learn more about gulp and patterns for task automation in my [Gulp Pluralsight course](http://jpapa.me/gulpps)
-
-###### [Style [Y400](#style-y400)]
-
-  - Use task automation to list module definition files `*.module.js` before all other application JavaScript files.
-
-    *Why?*: Angular needs the module definitions to be registered before they are used.
-
-    *Why?*: Naming modules with a specific pattern such as `*.module.js` makes it easy to grab them with a glob and list them first.
-
-    ```javascript
-    var clientApp = './src/client/app/';
-
-    // Always grab module files first
-    var files = [
-      clientApp + '**/*.module.js',
-      clientApp + '**/*.js'
-    ];
     ```
 
 **[Back to top](#table-of-contents)**
